@@ -213,20 +213,9 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev, std::vector<Lidar
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-  std::vector<BoundingBox> bbprev;
-  std::vector<BoundingBox> bbcurr;
-
-  vector<string> classes;
-  ifstream ifs("../dat/yolo/coco.names");
-  string line;
-  while (getline(ifs, line)) classes.push_back(line);
-  
-  cv::Mat visImg = currFrame.cameraImg.clone();
-  cv::Mat visImg2 = currFrame.cameraImg.clone();
-
   //filter keypoints
-  bbprev = prevFrame.boundingBoxes;
-  bbcurr = currFrame.boundingBoxes;
+  std::vector<BoundingBox> bbprev = prevFrame.boundingBoxes;
+  std::vector<BoundingBox> bbcurr = currFrame.boundingBoxes;
   std::vector<cv::KeyPoint> prevkp = prevFrame.keypoints;
   std::vector<cv::KeyPoint> currkp = currFrame.keypoints;
   std::map<std::string, int> counter;
@@ -250,7 +239,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     }
   }
   for(auto it = counter.begin(); it != counter.end(); it++) {
-    //std::cout<<it->first<< " "<<it->second<<std::endl;
+    std::cout<<it->first<< " "<<it->second<<std::endl;
     if(it->second > 50) {
       std::stringstream ss(it->first);
       std::string s1;
@@ -261,61 +250,69 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     }
   }
   
-  cv::Scalar colors [8] = {
-    cv::Scalar(0, 255, 0),
-    cv::Scalar(0, 0, 255),
-    cv::Scalar(0, 0, 102),
-    cv::Scalar(0, 204, 204),
-    cv::Scalar(51, 51, 255),
-    cv::Scalar(255, 51, 153),
-    cv::Scalar(153, 0, 76),
-    cv::Scalar(153, 200, 76)
-  };
-  int colorCount = 0;
-  int mycount = 0;
-  for(auto it = bbBestMatches.begin(); it != bbBestMatches.end(); it++) {
-    int top, left, width, height;
-    auto currbox = currFrame.boundingBoxes[it->second];
-    top = currbox.roi.y;
-    left = currbox.roi.x;
-    width = currbox.roi.width;
-    height = currbox.roi.height;
-    if(top < 0 || left < 0 || width < 0 || height < 0) {
-      continue;
-    }
+  // vector<string> classes;
+  // ifstream ifs("../dat/yolo/coco.names");
+  // string line;
+  // while (getline(ifs, line)) classes.push_back(line);
+  
+  // cv::Mat visImg = currFrame.cameraImg.clone();
+  // cv::Mat visImg2 = currFrame.cameraImg.clone();
+
+  // cv::Scalar colors [8] = {
+  //   cv::Scalar(0, 255, 0),
+  //   cv::Scalar(0, 0, 255),
+  //   cv::Scalar(0, 0, 102),
+  //   cv::Scalar(0, 204, 204),
+  //   cv::Scalar(51, 51, 255),
+  //   cv::Scalar(255, 51, 153),
+  //   cv::Scalar(153, 0, 76),
+  //   cv::Scalar(153, 200, 76)
+  // };
+  // int colorCount = 0;
+  // int mycount = 0;
+  // for(auto it = bbBestMatches.begin(); it != bbBestMatches.end(); it++) {
+  //   int top, left, width, height;
+  //   auto currbox = currFrame.boundingBoxes[it->second];
+  //   top = currbox.roi.y;
+  //   left = currbox.roi.x;
+  //   width = currbox.roi.width;
+  //   height = currbox.roi.height;
+  //   if(top < 0 || left < 0 || width < 0 || height < 0) {
+  //     continue;
+  //   }
     
-    cv::rectangle(visImg, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
+  //   cv::rectangle(visImg, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
     
-    string label = cv::format("%i", mycount++);
-    int baseLine;
-    cv::Size labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
-    top = max(top, labelSize.height);
-    rectangle(visImg, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
-    cv::putText(visImg, label, cv::Point(left, top), cv::FONT_ITALIC, 0.75, cv::Scalar(0,0,0),1);
+  //   string label = cv::format("%i", mycount++);
+  //   int baseLine;
+  //   cv::Size labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
+  //   top = max(top, labelSize.height);
+  //   rectangle(visImg, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
+  //   cv::putText(visImg, label, cv::Point(left, top), cv::FONT_ITALIC, 0.75, cv::Scalar(0,0,0),1);
 
-    auto prevbox = prevFrame.boundingBoxes[it->first];
-    top = prevbox.roi.y;
-    left = prevbox.roi.x;
-    width = prevbox.roi.width;
-    height = prevbox.roi.height;
-    cv::rectangle(visImg2, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
+  //   auto prevbox = prevFrame.boundingBoxes[it->first];
+  //   top = prevbox.roi.y;
+  //   left = prevbox.roi.x;
+  //   width = prevbox.roi.width;
+  //   height = prevbox.roi.height;
+  //   cv::rectangle(visImg2, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
 
-    labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
-    top = max(top, labelSize.height);
-    rectangle(visImg2, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
-    cv::putText(visImg2, label, cv::Point(left, top), cv::FONT_ITALIC, 0.75, cv::Scalar(0,0,0),1);
+  //   labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
+  //   top = max(top, labelSize.height);
+  //   rectangle(visImg2, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
+  //   cv::putText(visImg2, label, cv::Point(left, top), cv::FONT_ITALIC, 0.75, cv::Scalar(0,0,0),1);
 
-    colorCount++;
-    if(colorCount >=7) {
-      colorCount = 0;
-    }
-  }
+  //   colorCount++;
+  //   if(colorCount >=7) {
+  //     colorCount = 0;
+  //   }
+  // }
 
-  string windowName = "curr";
-  cv::namedWindow( windowName, 1 );
-  cv::imshow( windowName, visImg );
-  windowName = "prev";
-  cv::namedWindow( windowName, 1 );
-  cv::imshow( windowName, visImg2 );
-  cv::waitKey(0); // wait for key to be pressed
+  // string windowName = "curr";
+  // cv::namedWindow( windowName, 1 );
+  // cv::imshow( windowName, visImg );
+  // windowName = "prev";
+  // cv::namedWindow( windowName, 1 );
+  // cv::imshow( windowName, visImg2 );
+  // cv::waitKey(0); // wait for key to be pressed
 }
