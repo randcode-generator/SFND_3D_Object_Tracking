@@ -135,10 +135,14 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 {
   for(cv::DMatch d : kptMatches) {
     auto currkp = kptsCurr[d.trainIdx];
+    auto prevkp = kptsCurr[d.queryIdx];
     bool firstpt = boundingBox.roi.contains(currkp.pt);
     if(firstpt) {
-      boundingBox.keypoints.push_back(currkp);
-      boundingBox.kptMatches.push_back(d);
+      float distance = cv::norm(currkp.pt-prevkp.pt);
+      if(distance < 60) {
+        boundingBox.keypoints.push_back(currkp);
+        boundingBox.kptMatches.push_back(d);
+      }
     }
   }
 }
