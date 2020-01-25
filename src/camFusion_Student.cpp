@@ -192,6 +192,22 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
   // EOF STUDENT TASK
 }
 
+float bestFitLine(vector<cv::Point2f> temp, float start, float end) {
+  cv::Vec4f outv;
+  cv::fitLine(temp, outv, 2, 0, 0.001, 0.01);
+  float x1 = outv[0];
+  float y1 = outv[1];
+  float x2 = outv[2];
+  float y2 = outv[3];
+
+  float m = (y2 - y1)/(x2 - x1);
+  float b = y2 - m * x2;
+
+  float findy = ((end-start)/2.0)+start;
+  float x = (findy - b)/m;
+  return x;
+}
+
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev, std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
   // auxiliary variables
@@ -199,13 +215,23 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev, std::vector<Lidar
 
   // find closest distance to Lidar points 
   double minXPrev = 1e9, minXCurr = 1e9;
+  float boundStart = -0.325;
+  float boundEnd = 0.075;
+  vector<cv::Point2f> temp1;
   for(auto it=lidarPointsPrev.begin(); it!=lidarPointsPrev.end(); ++it) {
-    minXPrev = minXPrev>it->x ? it->x : minXPrev;
+    if (it->y > boundStart and it->y < boundEnd) {
+      temp1.push_back(cv::Point2f(it->x, it->y));
+    }
   }
+  minXPrev = bestFitLine(temp1, boundStart, boundEnd);
 
+  vector<cv::Point2f> temp2;
   for(auto it=lidarPointsCurr.begin(); it!=lidarPointsCurr.end(); ++it) {
-    minXCurr = minXCurr>it->x ? it->x : minXCurr;
+    if (it->y > boundStart and it->y < boundEnd) {
+      temp2.push_back(cv::Point2f(it->x, it->y));
+    }
   }
+  minXCurr = bestFitLine(temp2, boundStart, boundEnd);
 
   // compute TTC from both measurements
   TTC = minXCurr * dT / (minXPrev-minXCurr);
@@ -239,7 +265,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     }
   }
   for(auto it = counter.begin(); it != counter.end(); it++) {
-    std::cout<<it->first<< " "<<it->second<<std::endl;
+    //std::cout<<it->first<< " "<<it->second<<std::endl;
     if(it->second > 50) {
       std::stringstream ss(it->first);
       std::string s1;
@@ -250,6 +276,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     }
   }
   
+  // //new
   // vector<string> classes;
   // ifstream ifs("../dat/yolo/coco.names");
   // string line;
@@ -283,7 +310,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     
   //   cv::rectangle(visImg, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
     
-  //   string label = cv::format("%i", mycount++);
+  //   string label = cv::format("%i", currbox.boxID);
   //   int baseLine;
   //   cv::Size labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
   //   top = max(top, labelSize.height);
@@ -297,6 +324,7 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
   //   height = prevbox.roi.height;
   //   cv::rectangle(visImg2, cv::Point(left, top), cv::Point(left+width, top+height),colors[colorCount], 2);
 
+  //   label = cv::format("%i", prevbox.boxID);
   //   labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
   //   top = max(top, labelSize.height);
   //   rectangle(visImg2, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
@@ -315,4 +343,5 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
   // cv::namedWindow( windowName, 1 );
   // cv::imshow( windowName, visImg2 );
   // cv::waitKey(0); // wait for key to be pressed
+  // //new
 }

@@ -176,6 +176,19 @@ int main(int argc, const char *argv[])
       exit(1); 
     }
 
+    bool bFocusOnVehicle = true;
+    cv::Rect vehicleRect(535, 180, 180, 150);
+    if (bFocusOnVehicle)
+    {
+      for (std::vector<cv::KeyPoint>::iterator it = keypoints.begin() ; it != keypoints.end(); ++it) {
+        cv::KeyPoint kp = *it;
+        cv::Point2f pt = kp.pt;
+        if (!vehicleRect.contains(pt)) {
+          keypoints.erase(it--);
+        }
+      }
+    }
+
     // optional : limit number of keypoints (helpful for debugging and learning)
     bool bLimitKpts = false;
     if (bLimitKpts)
@@ -224,6 +237,24 @@ int main(int argc, const char *argv[])
 
       cout << "#7 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
+      // //new
+      // bool bVis3 = true;
+      // if (bVis3)
+      // {
+      //   cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
+      //   cv::drawMatches((dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 2)->keypoints,
+      //                   (dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->keypoints,
+      //                   matches, matchImg,
+      //                   cv::Scalar::all(-1), cv::Scalar::all(-1),
+      //                   vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+      //   string windowName = "Matching keypoints between two camera images";
+      //   cv::namedWindow(windowName, 7);
+      //   cv::imshow(windowName, matchImg);
+      //   //cout << "Press key to continue to next image" << endl;
+      //   cv::waitKey(0); // wait for key to be pressed
+      // }
+      // //new
       /* TRACK 3D OBJECT BOUNDING BOXES */
 
       //// STUDENT ASSIGNMENT
