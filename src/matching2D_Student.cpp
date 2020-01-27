@@ -4,6 +4,42 @@
 
 using namespace std;
 
+void detectKeypoints(std::string detectorType, cv::Mat imgGray, std::vector<cv::KeyPoint> &keypoints) {
+  if (detectorType.compare("SHITOMASI") == 0)
+  {
+    detKeypointsShiTomasi(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("HARRIS") == 0)
+  {
+    detKeypointsHarris(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("BRISK") == 0)
+  {
+    detKeypointsBrisk(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("SIFT") == 0)
+  {
+    detKeypointSift(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("FAST") == 0)
+  {
+    detKeypointFast(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("AKAZE") == 0)
+  {
+    detKeypointAkaze(keypoints, imgGray, false);
+  }
+  else if (detectorType.compare("ORB") == 0)
+  {
+    detKeypointOrb(keypoints, imgGray, false);
+  }
+  else
+  {
+    std::cout<<"Detector : "<< detectorType << " not found.\n";
+    exit(1); 
+  }
+}
+
 // Find best matches for keypoints in two camera images based on several matching methods
 void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
                       std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)

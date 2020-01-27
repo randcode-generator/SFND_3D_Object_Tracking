@@ -19,6 +19,7 @@
 
 #include "dataStructures.h"
 
+void detectKeypoints(std::string detectorType, cv::Mat imgGray, std::vector<cv::KeyPoint> &keypoints);
 
 void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);
 void detKeypointsShiTomasi(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);

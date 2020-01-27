@@ -92,6 +92,9 @@ int main(int argc, const char *argv[])
     DataFrame frame;
     frame.cameraImg = img;
     dataBuffer.push_back(frame);
+    if(dataBuffer.size() > 2) {
+      dataBuffer.erase(dataBuffer.begin());
+    }
 
     cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
     /* DETECT & CLASSIFY OBJECTS */
@@ -141,40 +144,7 @@ int main(int argc, const char *argv[])
     // extract 2D keypoints from current image
     vector<cv::KeyPoint> keypoints; // create empty feature list for current image
     string detectorType = "FAST";
-
-    if (detectorType.compare("SHITOMASI") == 0)
-    {
-      detKeypointsShiTomasi(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("HARRIS") == 0)
-    {
-      detKeypointsHarris(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("BRISK") == 0)
-    {
-      detKeypointsBrisk(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("SIFT") == 0)
-    {
-      detKeypointSift(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("FAST") == 0)
-    {
-      detKeypointFast(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("AKAZE") == 0)
-    {
-      detKeypointAkaze(keypoints, imgGray, false);
-    }
-    else if (detectorType.compare("ORB") == 0)
-    {
-      detKeypointOrb(keypoints, imgGray, false);
-    }
-    else
-    {
-      std::cout<<"Detector : "<< detectorType << " not found.\n";
-      exit(1); 
-    }
+    detectKeypoints(detectorType, imgGray, keypoints);
 
     bool bFocusOnVehicle = true;
     cv::Rect vehicleRect(535, 180, 180, 150);
