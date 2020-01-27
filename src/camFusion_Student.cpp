@@ -9,6 +9,7 @@
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/xfeatures2d/nonfree.hpp>
 
+#include <sstream>
 #include "camFusion.hpp"
 #include "dataStructures.h"
 
@@ -119,6 +120,12 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     cv::line(topviewImg, cv::Point(0, y), cv::Point(imageSize.width, y), cv::Scalar(255, 0, 0));
   }
 
+  std::time_t seconds = std::time(nullptr);
+  std::stringstream ss;
+  ss << seconds;
+  std::string ts = ss.str();
+
+  imwrite( ts+".png", topviewImg );
   // display image
   string windowName = "3D Objects";
   cv::namedWindow(windowName, 1);
@@ -170,6 +177,7 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
       double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
       double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
 
+      //cout<<distCurr<< " "<< distPrev<<endl;
       if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
       { // avoid division by zero
 
@@ -209,6 +217,8 @@ float bestFitLine(vector<cv::Point2f> temp, float start, float end) {
 
   float findy = ((end-start)/2.0)+start;
   float x = (findy - b)/m;
+
+  cout<<m<<endl;
   return x;
 }
 

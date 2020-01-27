@@ -123,10 +123,10 @@ int main(int argc, const char *argv[])
     clusterLidarWithROI((dataBuffer.end()-1)->boundingBoxes, (dataBuffer.end() - 1)->lidarPoints, shrinkFactor, P_rect_00, R_rect_00, RT);
 
     // Visualize 3D objects
-    bVis = false;
+    bVis = true;
     if(bVis)
     {
-      show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(2000, 1000), true);
+      show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(2000, 2000), true);
     }
     bVis = false;
 
@@ -309,7 +309,7 @@ int main(int argc, const char *argv[])
           computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
           //// EOF STUDENT ASSIGNMENT
 
-          bVis = true;
+          bVis = false;
           if (bVis)
           {
             cv::Mat visImg = (dataBuffer.end() - 1)->cameraImg.clone();
