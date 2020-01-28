@@ -143,7 +143,7 @@ int main(int argc, const char *argv[])
 
     // extract 2D keypoints from current image
     vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-    string detectorType = "FAST";
+    string detectorType = "AKAZE";
     detectKeypoints(detectorType, imgGray, keypoints);
 
     bool bFocusOnVehicle = true;
@@ -181,7 +181,7 @@ int main(int argc, const char *argv[])
     /* EXTRACT KEYPOINT DESCRIPTORS */
 
     cv::Mat descriptors;
-    string descriptorType = "BRIEF"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+    string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
     descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
 
     // push descriptors for current frame to end of data buffer
@@ -195,7 +195,6 @@ int main(int argc, const char *argv[])
 
       vector<cv::DMatch> matches;
       string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-      string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
       string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
       matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
@@ -279,7 +278,7 @@ int main(int argc, const char *argv[])
           computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
           //// EOF STUDENT ASSIGNMENT
 
-          bVis = false;
+          bVis = true;
           if (bVis)
           {
             cv::Mat visImg = (dataBuffer.end() - 1)->cameraImg.clone();
