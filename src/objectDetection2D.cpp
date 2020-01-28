@@ -74,23 +74,6 @@ void detectObjects(cv::Mat& img, std::vector<BoundingBox>& bBoxes, float confThr
         box.x = cx - box.width/2; // left
         box.y = cy - box.height/2; // top
         
-        // cv::rectangle(visImg33, cv::Point(box.x, box.y), 
-        //   cv::Point(box.x+box.width, box.y+box.height),cv::Scalar(0, 255, 0), 2);
-
-        // string label = cv::format("%.2f", (float)confidence);
-        // label = classes[classId.x] + ":" + label;
-    
-        // int left = box.x;
-        // int top = box.y;
-        // int width = box.width;
-        // int height = box.height;
-        // // Display label at the top of the bounding box
-        // int baseLine;
-        // cv::Size labelSize = getTextSize(label, cv::FONT_ITALIC, 0.5, 1, &baseLine);
-        // top = max(top, labelSize.height);
-        // rectangle(visImg33, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
-        // cv::putText(visImg33, label, cv::Point(left, top), cv::FONT_ITALIC, 0.35, cv::Scalar(0,0,0),1);
-
         boxes.push_back(box);
         classIds.push_back(classId.x);
         confidences.push_back((float)confidence);
@@ -111,11 +94,6 @@ void detectObjects(cv::Mat& img, std::vector<BoundingBox>& bBoxes, float confThr
     bBoxes.push_back(bBox);
   }
   
-    // string windowName = "Object sdsdf";
-    // cv::namedWindow( windowName, 1 );
-    // cv::imshow( windowName, visImg33 );
-    // cv::waitKey(0); // wait for key to be pressed
-
   // show results
   if(bVis) {
     cv::Mat visImg = img.clone();
