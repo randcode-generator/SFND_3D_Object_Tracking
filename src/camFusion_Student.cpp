@@ -254,7 +254,6 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
     }
   }
   for(auto it = counter.begin(); it != counter.end(); it++) {
-    //std::cout<<it->first<< " "<<it->second<<std::endl;
     if(it->second > 50) {
       std::stringstream ss(it->first);
       std::string s1;
